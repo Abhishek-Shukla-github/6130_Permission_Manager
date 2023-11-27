@@ -142,19 +142,6 @@ public class ApplicationsDatabase {
         }
     }
 
-//    public void recomputePermissions(){TODO: this would get used later
-//        PackageManager pm = context.getPackageManager();
-//        for(int i = 0, numberOfApplications = applications.size(); i < numberOfApplications; i++){
-//            AndroidApplication application = applications.get(i);
-//            if(application.getWarnablePermissions().size() > 0)
-//                try {
-//                    applications.remove(i);
-//                    applications.add(i, createAndroidApplication(pm, pm.getApplicationInfo(application.getPackageName(), PackageManager.GET_META_DATA)));
-//                } catch (PackageManager.NameNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//        }
-//    }
 
     public Set<String> getIgnoredPermissionsForAllApps() {
         return permissionsManagerSharedPreferences.getStringSet(context.getString(R.string.allowed_permissions), new HashSet<String>(0));
@@ -285,7 +272,6 @@ public class ApplicationsDatabase {
                 .putInt(SHARED_PREF_KEY_DUMMY, new Random().nextInt())
                 .putStringSet(SHARED_PREF_KEY_TEMPORARILY_IGNORED_APPS, ignored_apps)
                 .apply();
-        //android 19 has issue saving hashset, so we have to save something random with it
         AndroidApplication unignoredApplication = createACopyOfAndroidApplicationButIgnoredFlag(false, androidApplication);
         applications.remove(unignoredApplication);
         applications.add(unignoredApplication);

@@ -22,13 +22,12 @@ import androidx.core.app.NotificationCompat;
 
 public class ValidatePermissionsBroadcastReceiver extends BroadcastReceiver{
 
-    public static final int GENERIC_REQUEST_CODE = 123; //generic code used for notification id, pending intent id
+    public static final int GENERIC_REQUEST_CODE = 123;
     public static final int FOUR_HOURLY_SCAN_RESULT_NOTIICATION_CODE = 3477;
     private PendingResult pendingResult;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        // Utils.notify("Woke up", new Date().toString(), 9653, context);
         if(!SCAN.equals(intent.getAction())) return;
         setAlarm(context);
         System.out.println("validate permissions broadcast reciever yolo " + intent);

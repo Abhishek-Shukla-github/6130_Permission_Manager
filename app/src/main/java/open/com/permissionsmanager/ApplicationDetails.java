@@ -25,6 +25,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+//Change Incoming
+
 public class ApplicationDetails extends AppCompatActivity {
     private AndroidApplication application;
     private LayoutInflater layoutInflater;
