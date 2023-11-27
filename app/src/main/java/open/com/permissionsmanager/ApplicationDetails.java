@@ -25,7 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-//Change Incoming
+//Change Incoming 2
 
 public class ApplicationDetails extends AppCompatActivity {
     private AndroidApplication application;
