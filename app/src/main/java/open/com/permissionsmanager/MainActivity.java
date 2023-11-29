@@ -1,5 +1,4 @@
 package open.com.permissionsmanager;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -9,8 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,50 +25,19 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
     public static final String APPLICATION_PACKAGE_NAME = "APPLICATION_PACKAGE_NAME";
     private ApplicationsDatabase applicationsDatabase;
     private List<AndroidApplication> warnableApplications, ignoredApplications;
-    private ListView listOfApplications_listView, ignoreListOfApplications_listView;
+    private GridView listOfApplications_gridView, ignorelistOfApplications_gridView;
     private AppCompatTextView warnableAppsToggle;
     private AppCompatTextView ignoredAppsToggle;
 
 
 
-    BiometricPrompt biometricPrompt;
-    BiometricPrompt.PromptInfo promptInfo;
-//    ConstraintLayout mMainlayout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        BiometricManager biometricManager = BiometricManager.from(this);
-        switch (biometricManager.canAuthenticate())
-        {
-            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
-                Toast.makeText(getApplicationContext(),"Device Dosen't have Fingerprint", Toast.LENGTH_SHORT).show();
-                break;
-            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
-                Toast.makeText(getApplicationContext(),"FingerPrint Scanner not working.", Toast.LENGTH_SHORT).show();
-                break;
-            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
-                Toast.makeText(getApplicationContext(),"No FingerPrint Assigned", Toast.LENGTH_SHORT).show();
-
-        }
 //        Executor executor = ContextCompat.getMainExecutor(this);
-        biometricPrompt = new androidx.biometric.BiometricPrompt(MainActivity.this, ContextCompat.getMainExecutor(this) , new androidx.biometric.BiometricPrompt.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationSucceeded(@NonNull androidx.biometric.BiometricPrompt.AuthenticationResult result) {
-                super.onAuthenticationSucceeded(result);
-                Toast.makeText(getApplicationContext(),"login Success", Toast.LENGTH_SHORT).show();
-                findViewById(R.id.activity_main).setVisibility(View.VISIBLE);
-
-            }
-        });
-        promptInfo = new BiometricPrompt.PromptInfo.Builder().setTitle("INSE 6130 Security Application").setDescription("Use FingerPrint To Login").setDeviceCredentialAllowed(true).build();
-        biometricPrompt.authenticate(promptInfo);
-
-
-
         applicationsDatabase = ApplicationsDatabase.getApplicationsDatabase(this);
         applicationsDatabase.addApplicationDatabaseChangeListener(this);
         setupListViewsAndToggles();
@@ -99,13 +67,13 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
     }
 
     private void setupListViewsAndToggles() {
-        listOfApplications_listView = (ListView) findViewById(R.id.list_apps);
-        ignoreListOfApplications_listView = (ListView) findViewById(R.id.list_ignored_apps);
+        listOfApplications_gridView = (GridView) findViewById(R.id.grid_apps);
+        ignorelistOfApplications_gridView = (GridView) findViewById(R.id.grid_ignored_apps);
         warnableAppsToggle = (AppCompatTextView) findViewById(R.id.warnable_apps_toggle);
         ignoredAppsToggle = (AppCompatTextView) findViewById(R.id.ignored_apps_toggle);
 
-        warnableAppsToggle.setOnClickListener(getToggleClickListener(listOfApplications_listView, warnableAppsToggle));
-        ignoredAppsToggle.setOnClickListener(getToggleClickListener(ignoreListOfApplications_listView, ignoredAppsToggle));
+        warnableAppsToggle.setOnClickListener(getToggleClickListener(listOfApplications_gridView, warnableAppsToggle));
+        ignoredAppsToggle.setOnClickListener(getToggleClickListener(ignorelistOfApplications_gridView, ignoredAppsToggle));
 
         AdapterView.OnItemClickListener onAppClick = new AdapterView.OnItemClickListener() {
             @Override
@@ -116,29 +84,26 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
             }
         };
 
-        listOfApplications_listView.setOnItemClickListener(onAppClick);
+        listOfApplications_gridView.setOnItemClickListener(onAppClick);
 
-        listOfApplications_listView.setOnItemLongClickListener(getAppLongClickListener(true));
+        listOfApplications_gridView.setOnItemLongClickListener(getAppLongClickListener(true));
 
-        listOfApplications_listView.setAdapter(new PermissionsApplicationsArrayAdapter(MainActivity.this, R.layout.application_info_row));
+        listOfApplications_gridView.setAdapter(new PermissionsApplicationsArrayAdapter(MainActivity.this, R.layout.application_info_row));
 
-        ignoreListOfApplications_listView.setOnItemClickListener(onAppClick);
+        ignorelistOfApplications_gridView.setOnItemClickListener(onAppClick);
 
-        ignoreListOfApplications_listView.setOnItemLongClickListener(getAppLongClickListener(false));
-
-        ignoreListOfApplications_listView.setAdapter(new PermissionsApplicationsArrayAdapter(MainActivity.this, R.layout.application_info_row));
+        ignorelistOfApplications_gridView.setOnItemLongClickListener(getAppLongClickListener(false));
+        ignorelistOfApplications_gridView.setAdapter(new PermissionsApplicationsArrayAdapter(MainActivity.this, R.layout.application_info_row));
     }
-
     @NonNull
-    private View.OnClickListener getToggleClickListener(final ListView listView, final AppCompatTextView appCompatTextView) {
+    private View.OnClickListener getToggleClickListener(final GridView gridView, final AppCompatTextView appCompatTextView) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleList(listView, appCompatTextView);
+                toggleList(gridView, appCompatTextView);
             }
         };
     }
-
     @NonNull
     private AdapterView.OnItemLongClickListener getAppLongClickListener(final boolean isWarnableAppsList) {
         return new AdapterView.OnItemLongClickListener() {
@@ -162,17 +127,16 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
         };
     }
 
-    private void toggleList(ListView listView, AppCompatTextView toggle) {
-        if(listView.getVisibility() == View.VISIBLE){
-            listView.setVisibility(View.GONE);
+    private void toggleList(GridView gridView, AppCompatTextView toggle) {
+        if(gridView.getVisibility() == View.VISIBLE){
+            gridView.setVisibility(View.GONE);
             toggle.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_keyboard_arrow_down_24dp), null);
         }
         else{
-            listView.setVisibility(View.VISIBLE);
+            gridView.setVisibility(View.VISIBLE);
             toggle.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_keyboard_arrow_up_24dp), null);
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity_menu, menu);
@@ -197,21 +161,21 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
             }
         }.execute();
     }
-
     private void showSpinner() {
         findViewById(R.id.progressbar).setVisibility(View.VISIBLE);
         warnableAppsToggle.setVisibility(View.GONE);
         ignoredAppsToggle.setVisibility(View.GONE);
-        listOfApplications_listView.setVisibility(View.GONE);
-        ignoreListOfApplications_listView.setVisibility(View.GONE);
+        listOfApplications_gridView.setVisibility(View.GONE);
+        ignorelistOfApplications_gridView.setVisibility(View.GONE);
     }
 
     private void hideSpinner() {
         findViewById(R.id.progressbar).setVisibility(View.GONE);
         warnableAppsToggle.setVisibility(View.VISIBLE);
         ignoredAppsToggle.setVisibility(View.VISIBLE);
-        listOfApplications_listView.setVisibility(View.VISIBLE);
-        ignoreListOfApplications_listView.setVisibility(View.VISIBLE);
+        listOfApplications_gridView.setVisibility(View.VISIBLE);
+        ignorelistOfApplications_gridView.setVisibility(View.VISIBLE);
+
 
     }
 
@@ -223,8 +187,8 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
 
     @Override
     public void applicationPermissionsUpdated(final AndroidApplication androidApplication) {
-        final PermissionsApplicationsArrayAdapter warnableApplicationsListAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
-        final PermissionsApplicationsArrayAdapter ignoredApplicationsListAdapter = (PermissionsApplicationsArrayAdapter) ignoreListOfApplications_listView.getAdapter();
+        final PermissionsApplicationsArrayAdapter warnableApplicationsListAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_gridView.getAdapter();
+        final PermissionsApplicationsArrayAdapter ignoredApplicationsListAdapter = (PermissionsApplicationsArrayAdapter) ignorelistOfApplications_gridView.getAdapter();
         if(warnableApplicationsListAdapter == null && ignoredApplicationsListAdapter == null)
             return;
         if(androidApplication.isIgnoredTemporarily())
@@ -232,9 +196,7 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
         else
             updateAdapterWithNewApplication(androidApplication, warnableApplicationsListAdapter);
     }
-
     private void updateAdapterWithNewApplication(final AndroidApplication androidApplication, final PermissionsApplicationsArrayAdapter listAdapter) {
-
         final int indexOfApplication = listAdapter.getPosition(androidApplication);
         if(indexOfApplication == -1)
             return;
@@ -254,25 +216,23 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
             @Override
             public void run() {
                 showSpinner();
-                PermissionsApplicationsArrayAdapter warnableAppsAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
-                PermissionsApplicationsArrayAdapter ignoredAppsAdapter = (PermissionsApplicationsArrayAdapter) ignoreListOfApplications_listView.getAdapter();
+                PermissionsApplicationsArrayAdapter warnableAppsAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_gridView.getAdapter();
+                PermissionsApplicationsArrayAdapter ignoredAppsAdapter = (PermissionsApplicationsArrayAdapter) ignorelistOfApplications_gridView.getAdapter();
                 updateListWithApplications(warnableAppsAdapter, warnableApplications);
                 updateListWithApplications(ignoredAppsAdapter, ignoredApplications);
-                getSupportActionBar().setSubtitle(getString(R.string.apps_with_warnings_count) + warnableAppsAdapter.getCount());
+
                 hideSpinner();
             }
         });
     }
-
     private void updateListWithApplications(PermissionsApplicationsArrayAdapter adapter, List<AndroidApplication> androidApplications) {
         adapter.addAllApplications(androidApplications);
         adapter.notifyDataSetChanged();
     }
-
     @Override
     public void applicationsDatabaseUpdated(List<AndroidApplication> androidApplications) {
-        PermissionsApplicationsArrayAdapter warnableAppsListAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
-        PermissionsApplicationsArrayAdapter ignoredAppsListAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
+        PermissionsApplicationsArrayAdapter warnableAppsListAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_gridView.getAdapter();
+        PermissionsApplicationsArrayAdapter ignoredAppsListAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_gridView.getAdapter();
         if(warnableAppsListAdapter == null && ignoredAppsListAdapter == null)
             return;
         MainUtils.sort(androidApplications);
@@ -286,14 +246,12 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
         }
         updateView();
     }
-
     @Override
     public void applicationAddedToIgnoreList(final AndroidApplication application) {
         warnableApplications.remove(application);
         ignoredApplications.add(application);
         updateView();
     }
-
     @Override
     public void applicationRemovedFromIgnoredList(final AndroidApplication application) {
         runOnUiThread(new Runnable() {

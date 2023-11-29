@@ -31,7 +31,7 @@ public class MainUtils {
     public static final String SHARED_PREFERENCES_KEY_LAST_ALARM_TIME = "SHARED_PREFERENCES_KEY_LAST_ALARM_TIME";
     public static final String SHARED_PREF_KEY_LAST_SCAN_TIME = "LAST_SCAN_TIME";
     public static final int ONE_MINUTE = 60 * 1000;
-    public static final int FIVE_MINUTES = 5 * ONE_MINUTE;
+    public static final int FIVE_MINUTES = 1 * ONE_MINUTE;
     public static final long ALARM_INTERVAL = ONE_MINUTE * 30;
 
     public static SharedPreferences getSharedPreferences(Context context) {
