@@ -10,7 +10,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
-public class PermissionsManagerApp extends Application {
+public class CustomPermissionsManagerApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();

@@ -13,10 +13,10 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 
-public class ApplicationsArrayAdapter extends ArrayAdapter<AndroidApplication> {
+public class PermissionsApplicationsArrayAdapter extends ArrayAdapter<AndroidApplication> {
     private LayoutInflater layoutInflater;
 
-    public ApplicationsArrayAdapter(Context context, int resource) {
+    public PermissionsApplicationsArrayAdapter(Context context, int resource) {
         super(context, resource);
         layoutInflater = LayoutInflater.from(context);
     }

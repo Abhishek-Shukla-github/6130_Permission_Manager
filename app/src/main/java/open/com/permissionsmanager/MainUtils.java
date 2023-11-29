@@ -24,7 +24,7 @@ import androidx.core.app.NotificationCompat;
 
 
 
-public class Utils {
+public class MainUtils {
 
     public static final String SCAN = "SCAN";
     public static final String SHARED_PREFERENCES_KEY_IGNORED_APPLICATIONS_WARN_TIMESTAMP = "SHARED_PREFERENCES_KEY_IGNORED_APPLICATIONS_WARN_TIMESTAMP";

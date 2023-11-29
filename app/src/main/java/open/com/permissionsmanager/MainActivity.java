@@ -80,8 +80,8 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
     @Override
     protected void onResume() {
         super.onResume();
-        Utils.setAlarm(this);
-        if(Utils.areScanResultsOlderThan5Mins(this)){
+        MainUtils.setAlarm(this);
+        if(MainUtils.areScanResultsOlderThan5Mins(this)){
             scanApplications();
             showSpinner();
         }
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intentToShowApplicationDetails = new Intent(MainActivity.this, ApplicationDetails.class);
-                intentToShowApplicationDetails.putExtra(APPLICATION_PACKAGE_NAME, ((ApplicationsArrayAdapter) parent.getAdapter()).getItem(position).getPackageName());
+                intentToShowApplicationDetails.putExtra(APPLICATION_PACKAGE_NAME, ((PermissionsApplicationsArrayAdapter) parent.getAdapter()).getItem(position).getPackageName());
                 startActivity(intentToShowApplicationDetails);
             }
         };
@@ -120,13 +120,13 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
 
         listOfApplications_listView.setOnItemLongClickListener(getAppLongClickListener(true));
 
-        listOfApplications_listView.setAdapter(new ApplicationsArrayAdapter(MainActivity.this, R.layout.application_info_row));
+        listOfApplications_listView.setAdapter(new PermissionsApplicationsArrayAdapter(MainActivity.this, R.layout.application_info_row));
 
         ignoreListOfApplications_listView.setOnItemClickListener(onAppClick);
 
         ignoreListOfApplications_listView.setOnItemLongClickListener(getAppLongClickListener(false));
 
-        ignoreListOfApplications_listView.setAdapter(new ApplicationsArrayAdapter(MainActivity.this, R.layout.application_info_row));
+        ignoreListOfApplications_listView.setAdapter(new PermissionsApplicationsArrayAdapter(MainActivity.this, R.layout.application_info_row));
     }
 
     @NonNull
@@ -150,9 +150,9 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if(isWarnableAppsList)
-                                    applicationsDatabase.addAppToIgnoreList(((ApplicationsArrayAdapter)parent.getAdapter()).getItem(position));
+                                    applicationsDatabase.addAppToIgnoreList(((PermissionsApplicationsArrayAdapter)parent.getAdapter()).getItem(position));
                                 else
-                                    applicationsDatabase.removeAppFromIgnoreList(((ApplicationsArrayAdapter)parent.getAdapter()).getItem(position));
+                                    applicationsDatabase.removeAppFromIgnoreList(((PermissionsApplicationsArrayAdapter)parent.getAdapter()).getItem(position));
                             }
                         })
                         .setNegativeButton("No", null)
@@ -223,8 +223,8 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
 
     @Override
     public void applicationPermissionsUpdated(final AndroidApplication androidApplication) {
-        final ApplicationsArrayAdapter warnableApplicationsListAdapter = (ApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
-        final ApplicationsArrayAdapter ignoredApplicationsListAdapter = (ApplicationsArrayAdapter) ignoreListOfApplications_listView.getAdapter();
+        final PermissionsApplicationsArrayAdapter warnableApplicationsListAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
+        final PermissionsApplicationsArrayAdapter ignoredApplicationsListAdapter = (PermissionsApplicationsArrayAdapter) ignoreListOfApplications_listView.getAdapter();
         if(warnableApplicationsListAdapter == null && ignoredApplicationsListAdapter == null)
             return;
         if(androidApplication.isIgnoredTemporarily())
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
             updateAdapterWithNewApplication(androidApplication, warnableApplicationsListAdapter);
     }
 
-    private void updateAdapterWithNewApplication(final AndroidApplication androidApplication, final ApplicationsArrayAdapter listAdapter) {
+    private void updateAdapterWithNewApplication(final AndroidApplication androidApplication, final PermissionsApplicationsArrayAdapter listAdapter) {
 
         final int indexOfApplication = listAdapter.getPosition(androidApplication);
         if(indexOfApplication == -1)
@@ -254,8 +254,8 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
             @Override
             public void run() {
                 showSpinner();
-                ApplicationsArrayAdapter warnableAppsAdapter = (ApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
-                ApplicationsArrayAdapter ignoredAppsAdapter = (ApplicationsArrayAdapter) ignoreListOfApplications_listView.getAdapter();
+                PermissionsApplicationsArrayAdapter warnableAppsAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
+                PermissionsApplicationsArrayAdapter ignoredAppsAdapter = (PermissionsApplicationsArrayAdapter) ignoreListOfApplications_listView.getAdapter();
                 updateListWithApplications(warnableAppsAdapter, warnableApplications);
                 updateListWithApplications(ignoredAppsAdapter, ignoredApplications);
                 getSupportActionBar().setSubtitle(getString(R.string.apps_with_warnings_count) + warnableAppsAdapter.getCount());
@@ -264,18 +264,18 @@ public class MainActivity extends AppCompatActivity implements ApplicationDataba
         });
     }
 
-    private void updateListWithApplications(ApplicationsArrayAdapter adapter, List<AndroidApplication> androidApplications) {
+    private void updateListWithApplications(PermissionsApplicationsArrayAdapter adapter, List<AndroidApplication> androidApplications) {
         adapter.addAllApplications(androidApplications);
         adapter.notifyDataSetChanged();
     }
 
     @Override
     public void applicationsDatabaseUpdated(List<AndroidApplication> androidApplications) {
-        ApplicationsArrayAdapter warnableAppsListAdapter = (ApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
-        ApplicationsArrayAdapter ignoredAppsListAdapter = (ApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
+        PermissionsApplicationsArrayAdapter warnableAppsListAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
+        PermissionsApplicationsArrayAdapter ignoredAppsListAdapter = (PermissionsApplicationsArrayAdapter) listOfApplications_listView.getAdapter();
         if(warnableAppsListAdapter == null && ignoredAppsListAdapter == null)
             return;
-        Utils.sort(androidApplications);
+        MainUtils.sort(androidApplications);
         warnableApplications = new ArrayList<>();
         ignoredApplications = new ArrayList<>();
         for(AndroidApplication application: androidApplications){

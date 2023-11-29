@@ -31,7 +31,7 @@ public class ApplicationsDatabase {
 
     private ApplicationsDatabase(Context context) {
         this.context = context;
-        permissionsManagerSharedPreferences = Utils.getSharedPreferences(context);
+        permissionsManagerSharedPreferences = MainUtils.getSharedPreferences(context);
         applicationDatabaseChangeListeners = new ArrayList<>(3);
         updateApplicationsDatabaseAsync();
     }
@@ -92,7 +92,7 @@ public class ApplicationsDatabase {
         }
         performSynchronizedTask(TASK_REPLACE, newApplicationsList);
         scanInProgress = false;
-        Utils.updateLastScanTime(context);
+        MainUtils.updateLastScanTime(context);
         for (ApplicationDatabaseChangeListener applicationDatabaseChangeListener : applicationDatabaseChangeListeners)
             applicationDatabaseChangeListener.applicationsDatabaseUpdated(performSynchronizedTask(TASK_RETURN_A_COPY, applications));
     }

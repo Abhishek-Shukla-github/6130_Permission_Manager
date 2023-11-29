@@ -14,9 +14,9 @@ import java.util.Date;
 import static android.app.PendingIntent.FLAG_IMMUTABLE;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static java.util.Calendar.MONTH;
-import static open.com.permissionsmanager.Utils.ONE_MINUTE;
-import static open.com.permissionsmanager.Utils.SCAN;
-import static open.com.permissionsmanager.Utils.setAlarm;
+import static open.com.permissionsmanager.MainUtils.ONE_MINUTE;
+import static open.com.permissionsmanager.MainUtils.SCAN;
+import static open.com.permissionsmanager.MainUtils.setAlarm;
 
 import androidx.core.app.NotificationCompat;
 
@@ -31,7 +31,7 @@ public class ValidatePermissionsBroadcastReceiver extends BroadcastReceiver{
         if(!SCAN.equals(intent.getAction())) return;
         setAlarm(context);
         System.out.println("validate permissions broadcast reciever yolo " + intent);
-        Utils.updateLastAlarmTime(context);
+        MainUtils.updateLastAlarmTime(context);
         pendingResult = goAsync();
         new Thread(){
             @Override
@@ -104,12 +104,12 @@ public class ValidatePermissionsBroadcastReceiver extends BroadcastReceiver{
                 .build();
         System.out.println("notifying on ignored apps");
         notificationManager.notify(GENERIC_REQUEST_CODE, notification);
-        Utils.setLastIgnoredApplicationsWarningNotifiedInstance(context, Calendar.getInstance().getTimeInMillis());
+        MainUtils.setLastIgnoredApplicationsWarningNotifiedInstance(context, Calendar.getInstance().getTimeInMillis());
     }
 
     private boolean isItTimeToWarnAboutIgnoredApps(Context context){
-        Calendar oneMonthAgoTimeStamp = Utils.getCalendarInstanceRelativeFromNow(MONTH, -1);
-        Calendar lastWarnedTimeStamp = Utils.getCalendarInstanceWith(Utils.getLastIgnoredApplicationsWarningNotifiedInstance(context));
+        Calendar oneMonthAgoTimeStamp = MainUtils.getCalendarInstanceRelativeFromNow(MONTH, -1);
+        Calendar lastWarnedTimeStamp = MainUtils.getCalendarInstanceWith(MainUtils.getLastIgnoredApplicationsWarningNotifiedInstance(context));
 
         return lastWarnedTimeStamp.before(oneMonthAgoTimeStamp);
     }
