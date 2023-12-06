@@ -32,6 +32,8 @@ public class ApplicationDetails extends AppCompatActivity {
     private LayoutInflater layoutInflater;
     private ApplicationsDatabase applicationsDatabase;
 
+//    private static final int PERMISSION_THRESHOLD = 5; // Adjust the threshold as needed
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +93,19 @@ public class ApplicationDetails extends AppCompatActivity {
 
             }
         });
+
+
+        TextView permissionCountTextView = findViewById(R.id.permissionCount);
+        updatePermissionCount(permissionCountTextView);
+    }
+git
+    // Add this method to update the permission count dynamically
+    private void updatePermissionCount(TextView permissionCountTextView) {
+        int totalPermissions = application.getWarnablePermissions().size() + application.getNonwarnablePermissions().size();
+//        int totalPermissions = application.getWarnablePermissions().size() + application.getNonwarnablePermissions().size();
+        String permissionCountText = getString(R.string.permission_count, totalPermissions);
+        permissionCountTextView.setText(permissionCountText);
+
     }
 
     @Override
@@ -114,9 +129,18 @@ public class ApplicationDetails extends AppCompatActivity {
     }
 
     private void addApplicationDetails() {
+        setTitle(application.getName());
+
+        // Set red icon visibility based on the threshold
+
         final List<String> warnablePermissions = getNameSpaceTruncatedPermissions(application.getWarnablePermissions());
         setTitle(application.getName());
         ListView permissionsList_listView = (ListView) findViewById(R.id.permissions);
+        // Check if the total count exceeds the threshold
+        boolean exceedsThreshold = (warnablePermissions.size() + getNameSpaceTruncatedPermissions(application.getNonwarnablePermissions()).size()) >= application.getDangerousThreshold();
+        ImageView redIcon = (ImageView) findViewById(R.id.redIcon); // Replace with the actual ID
+        redIcon.setVisibility(exceedsThreshold ? View.VISIBLE : View.INVISIBLE);
+
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.permission_row){
             @NonNull
             @Override

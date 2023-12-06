@@ -77,17 +77,29 @@ public class ApplicationsDatabase {
         AndroidApplication androidApplication;
         List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
         Set<String> ignoredPermissionsForAllApps = getIgnoredPermissionsForAllApps();
-        Set<String> temporarilyIgnoredApps = permissionsManagerSharedPreferences.getStringSet(SHARED_PREF_KEY_TEMPORARILY_IGNORED_APPS, new HashSet<String>(0));
+        Set<String> temporarilyIgnoredApps = getIgnoredAppsList();
+
         for (ApplicationInfo applicationInfo : packages) {
-            if (!applicationInfo.enabled || applicationInfo.packageName.startsWith(AOSP_APPS_PREFIX))
-                continue;
+            String packageName = applicationInfo.packageName;
+            //System.out.println("Processing App: " + packageName + " (System App: " + ((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) + ")");
+
+            if (!applicationInfo.enabled || (applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0 || packageName.startsWith(AOSP_APPS_PREFIX)) {
+                //System.out.println("Skipped App: " + packageName);
+                continue;  // Skip system apps and AOSP apps
+            }
+
+            // Rest of the code for user-installed apps
+            //System.out.println("User Installed App: " + packageName);
+
             try {
                 androidApplication = createAndroidApplication(pm, applicationInfo, temporarilyIgnoredApps, ignoredPermissionsForAllApps);
-                if (androidApplication.getWarnablePermissions().size() == 0)
+                if (androidApplication.getWarnablePermissions().size() == 0) {
+                    System.out.println("App with no warnable permissions: " + packageName);
                     continue;
+                }
                 newApplicationsList.add(androidApplication);
             } catch (PackageManager.NameNotFoundException e) {
-                System.out.println("name not found for package " + applicationInfo.packageName + " hence skipping it");
+                System.out.println("Name not found for package " + packageName + ", skipping it");
             }
         }
         performSynchronizedTask(TASK_REPLACE, newApplicationsList);
@@ -104,6 +116,9 @@ public class ApplicationsDatabase {
         List<String> nonwarnablePermission = new ArrayList<>();
         List<String> warnablePermissions = new ArrayList<>(3);
         Set<String> appSpecificIgnoreList;
+
+        int dangerousThreshold = 1;
+
         if (packageInfo.requestedPermissions != null) {
             appSpecificIgnoreList = getAppSpecificIgnoreList(applicationInfo.packageName);
             for (String permission : packageInfo.requestedPermissions) {
@@ -115,12 +130,23 @@ public class ApplicationsDatabase {
                 }
             }
         }
+        System.out.println(applicationInfo.packageName);
+        // Check if the app is WhatsApp and set a specific threshold
+        if (applicationInfo.packageName.equals("com.whatsapp")) {
+            dangerousThreshold = 10; // Set your specific threshold for WhatsApp
+        } else {
+            // For other apps, set a random threshold between 1 to 5
+            Random random = new Random();
+            dangerousThreshold = random.nextInt(5) + 1;
+        }
+
         return new AndroidApplication.Builder(packageInfo.packageName)
                 .withName(getApplicationName(pm, applicationInfo))
                 .withNonWarnablePermissions(nonwarnablePermission)
                 .withWarnablePermissions(warnablePermissions)
                 .withIcon(pm.getApplicationIcon(packageInfo.packageName))
                 .withIgnoredTemporarily(temporarilyIgnoredApps.contains(packageInfo.packageName))
+                .withDangerousThreshold(dangerousThreshold)
                 .build();
     }
 

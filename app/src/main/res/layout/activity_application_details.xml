@@ -9,11 +9,31 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="open.com.permissionsmanager.ApplicationDetails">
+
+    <!-- Display the count of permissions above the ListView -->
+    <TextView
+        android:id="@+id/permissionCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:padding="8dp"
+        android:text="Number of Permissions: 0" />
+
     <ListView
         android:layout_width="wrap_content"
         android:id="@+id/permissions"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        android:layout_below="@id/permissionCount"
+        android:layout_marginTop="8dp">
     </ListView>
-</RelativeLayout>
 
+    <!-- Add the ImageView for the red icon -->
+    <ImageView
+        android:id="@+id/redIcon"
+        android:layout_width="53dp"
+        android:layout_height="41dp"
+        android:src="@drawable/ic_keyboard_arrow_up_24dp"
+        android:visibility="invisible" />
+
+</RelativeLayout>

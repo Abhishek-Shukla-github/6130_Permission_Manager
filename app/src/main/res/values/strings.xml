@@ -13,4 +13,5 @@
     <string name="warnable_apps">Applications with Cautions</string>
     <string name="temporarily_ignored_apps">Non-Prioritized application</string>
     <string name="look_ignored_apps">Have a look at ignored apps</string>
+    <string name="permission_count">Threshold Breached: %d Permissions</string>
 </resources>

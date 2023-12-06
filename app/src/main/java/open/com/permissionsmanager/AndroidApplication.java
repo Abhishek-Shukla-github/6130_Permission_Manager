@@ -6,6 +6,15 @@ import java.util.List;
 
 
 public class AndroidApplication {
+    public int dangerousThreshold;
+
+    // ... existing code ...
+
+    public int getDangerousThreshold() {
+        return dangerousThreshold;
+    }
+
+    // ... existing code ...
 
     private String packageName;
     private String name;
@@ -108,7 +117,12 @@ public class AndroidApplication {
             return this;
         }
 
-        public AndroidApplication build() {
+        public Builder withDangerousThreshold(int threshold) {
+            androidApplication.dangerousThreshold = threshold;
+            return this;
+        }
+
+            public AndroidApplication build() {
             return androidApplication;
         }
     }

@@ -22,6 +22,16 @@
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/warning_count_text"
         android:layout_toStartOf="@+id/warning_count_text" />
+
+    <ImageView
+        android:id="@+id/redIcon2"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/stat_sys_warning"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/warning_count_text"
+        android:layout_toStartOf="@+id/warning_count_text" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,4 +56,25 @@
         android:text="TextView"
         tools:text="Application Name"
          />
+
+<!--    <RelativeLayout-->
+<!--        xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--        xmlns:tools="http://schemas.android.com/tools"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        tools:context=".MainActivity">-->
+
+        <!-- Other layout elements -->
+<!--        <TextView-->
+<!--            android:id="@+id/exclamationTextView"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="!"-->
+<!--            android:textSize="24sp"-->
+<!--            android:textColor="#1100FF"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_marginEnd="8dp"-->
+<!--            android:layout_marginTop="8dp"/>-->
+<!--    </RelativeLayout>-->
+
 </RelativeLayout>
